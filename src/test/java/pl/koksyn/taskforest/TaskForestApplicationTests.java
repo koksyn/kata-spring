@@ -1,13 +1,10 @@
-package pl.koksyn.tasks;
+package pl.koksyn.taskforest;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class TaskManagementSystemApplicationTests {
-
+class TaskForestApplicationTests {
 	@Test
-	void contextLoads() {
-	}
-
+	void contextLoads() {}
 }
