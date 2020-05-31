@@ -1,0 +1,12 @@
+POST localhost:8080
+Content-Type: application/json
+
+{
+  "title": "Walk into forest",
+  "author": "nobody"
+}
+
+###
+GET localhost:8080
+
+###
