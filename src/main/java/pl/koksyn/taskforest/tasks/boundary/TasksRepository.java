@@ -1,4 +1,6 @@
-package pl.koksyn.taskforest.tasks;
+package pl.koksyn.taskforest.tasks.boundary;
+
+import pl.koksyn.taskforest.tasks.entity.Task;
 
 import java.util.List;
 

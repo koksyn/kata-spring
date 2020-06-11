@@ -2,8 +2,8 @@ POST localhost:8081/api/tasks
 Content-Type: application/json
 
 {
-  "id": 1,
   "title": "Walk into forest",
+  "description": "Walk",
   "author": "nobody"
 }
 

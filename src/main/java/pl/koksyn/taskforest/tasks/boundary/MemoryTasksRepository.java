@@ -1,6 +1,7 @@
-package pl.koksyn.taskforest.tasks;
+package pl.koksyn.taskforest.tasks.boundary;
 
 import org.springframework.stereotype.Component;
+import pl.koksyn.taskforest.tasks.entity.Task;
 
 import java.util.ArrayList;
 import java.util.HashSet;
