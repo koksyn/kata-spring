@@ -20,4 +20,20 @@ public class MemoryTasksRepository implements TasksRepository {
     public List<Task> getAll() {
         return new ArrayList<>(tasks);
     }
+
+    @Override
+    public Task get(long id) {
+        return tasks.stream()
+                .filter(task -> id == task.getId())
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Task not found"));
+    }
+
+    @Override
+    public void delete(long id) {
+        tasks.stream()
+                .filter(task -> id == task.getId())
+                .findFirst()
+                .ifPresent(tasks::remove);
+    }
 }

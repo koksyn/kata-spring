@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 
 @Data
 public class Task {
+    private long id;
     private String title;
     private String author;
     private LocalDateTime createdAt = LocalDateTime.now();

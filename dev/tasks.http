@@ -2,6 +2,7 @@ POST localhost:8081/api/tasks
 Content-Type: application/json
 
 {
+  "id": 1,
   "title": "Walk into forest",
   "author": "nobody"
 }
@@ -10,7 +11,10 @@ Content-Type: application/json
 GET localhost:8081/api/tasks
 
 ###
-DELETE localhost:8081/api/tasks
+GET localhost:8081/api/tasks/1
 
 ###
-PUT localhost:8081/api/tasks
+DELETE localhost:8081/api/tasks/1
+
+###
+#PUT localhost:8081/api/tasks/1
