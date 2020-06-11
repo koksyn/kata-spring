@@ -7,7 +7,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping(path = "/")
+@RequestMapping(path = "/api/tasks")
 @RequiredArgsConstructor
 public class TasksController {
     private final TasksRepository tasksRepository;
@@ -22,5 +22,15 @@ public class TasksController {
     public void add(@RequestBody Task task) {
         log.info("Storing new task {}", task);
         tasksRepository.add(task);
+    }
+
+    @DeleteMapping
+    public void delete() {
+        log.info("Deleting task");
+    }
+
+    @PutMapping
+    public void update() {
+        log.info("Updating task");
     }
 }
