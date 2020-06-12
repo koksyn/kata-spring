@@ -2,14 +2,20 @@ package pl.koksyn.taskforest.tasks.boundary;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.MimeType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import pl.koksyn.taskforest.tasks.control.TasksService;
 import pl.koksyn.taskforest.tasks.entity.Task;
+
 import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,9 +55,20 @@ public class TasksController {
     }
 
     @GetMapping("/{id}/attachments/{filename}")
-    public ResponseEntity getAttachment(@PathVariable long id, @PathVariable String filename) {
-        // pobierz plik
-        return ResponseEntity.noContent().build();
+    public ResponseEntity getAttachment(
+            @PathVariable long id,
+            @PathVariable String filename,
+            HttpServletRequest request) throws IOException {
+        Resource resource = storageService.loadFile(filename);
+        String mimeType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
+
+        if (mimeType == null) {
+            mimeType = "application/octet-stream";
+        }
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(mimeType))
+                .body(resource);
     }
 
     @PostMapping("/{id}/attachments")

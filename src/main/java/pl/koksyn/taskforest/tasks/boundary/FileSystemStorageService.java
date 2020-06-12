@@ -1,10 +1,13 @@
 package pl.koksyn.taskforest.tasks.boundary;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -25,5 +28,10 @@ public class FileSystemStorageService implements StorageService {
         final String fileName = file.getName();
         Path targetFilePath = targetDirPath.resolve(fileName);
         Files.copy(file.getInputStream(), targetFilePath, StandardCopyOption.REPLACE_EXISTING);
+    }
+
+    @Override
+    public Resource loadFile(String filename) throws MalformedURLException {
+        return new UrlResource(targetDirPath.resolve(filename).toUri());
     }
 }
