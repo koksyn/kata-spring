@@ -1,21 +1,20 @@
 package pl.koksyn.taskforest.tasks.boundary;
 
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.MimeType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import pl.koksyn.taskforest.tasks.control.TasksService;
 import pl.koksyn.taskforest.tasks.entity.Task;
-
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,10 +27,11 @@ import static java.util.stream.Collectors.toList;
 public class TasksController {
     private final StorageService storageService;
     private final TasksService tasksService;
-    private final TasksRepository tasksRepository;
 
     @PostConstruct
     void init() {
+        log.info("Adding example Tasks...");
+
         tasksService.addTask("Zetnij drzewo", "Siekiera", "Drwal");
         tasksService.addTask("Posadz drzewo", "Lopata", "Ogrodnik");
         tasksService.addTask("Podlewaj drzewo", "Konewka", "Ogrodnik");
@@ -39,7 +39,7 @@ public class TasksController {
 
     @GetMapping
     public List<TaskResponse> get(@RequestParam Optional<String> query) {
-        log.info("Fetching all tasks with query: {}", query);
+        log.info("Getting all Tasks with query: {}", query);
 
         return query.map(tasksService::filterAll)
                 .orElseGet(tasksService::getAll)
@@ -50,8 +50,33 @@ public class TasksController {
 
     @GetMapping("/{id}")
     public TaskResponse get(@PathVariable long id) {
-        log.info("Fetching task by id: {} ...", id);
-        return toTaskResponse(tasksRepository.get(id));
+        log.info("Getting Task by id: {}", id);
+
+        return toTaskResponse(tasksService.get(id));
+    }
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void add(@RequestBody CreateTaskRequest request) {
+        log.info("Adding new Task {}", request);
+
+        tasksService.addTask(request.getTitle(), request.getDescription(), request.getAuthor());
+    }
+
+    @PutMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void update(@PathVariable long id, @RequestBody UpdateTaskRequest request) {
+        log.info("Updating Task by id: {}", id);
+
+        tasksService.updateTask(id, request.getTitle(), request.getDescription(), request.getAuthor());
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable long id) {
+        log.info("Deleting task by id: {}", id);
+
+        tasksService.delete(id);
     }
 
     @GetMapping("/{id}/attachments/{filename}")
@@ -59,45 +84,31 @@ public class TasksController {
             @PathVariable long id,
             @PathVariable String filename,
             HttpServletRequest request) throws IOException {
-        Resource resource = storageService.loadFile(filename);
-        String mimeType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
+        log.info("Getting attachment '{}' for Task by id: {}", filename, id);
 
-        if (mimeType == null) {
-            mimeType = "application/octet-stream";
-        }
+        Resource resource = storageService.loadFile(filename);
+        String absolutePath = resource.getFile().getAbsolutePath();
+        String mimeType = request.getServletContext()
+                .getMimeType(absolutePath);
+
+        MediaType contentType = (StringUtils.isBlank(mimeType)) ?
+                MediaType.APPLICATION_OCTET_STREAM :
+                MediaType.parseMediaType(mimeType);
 
         return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(mimeType))
+                .contentType(contentType)
                 .body(resource);
     }
 
     @PostMapping("/{id}/attachments")
-    public ResponseEntity addAttachment(@PathVariable long id, @RequestParam("file") MultipartFile file) throws IOException {
-        log.info("Handling file upload: {}", file.getName());
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void addAttachment(@PathVariable long id, @RequestParam("file") MultipartFile file) throws IOException {
+        log.info("Adding attachment: '{}' for Task by id: {}", file.getName(), id);
+
         storageService.saveFile(id, file);
-        return ResponseEntity.noContent().build();
     }
 
-    @PostMapping
-    public void add(@RequestBody CreateTaskRequest request) {
-        log.info("Storing new task {}", request);
-        tasksService.addTask(request.getTitle(), request.getDescription(), request.getAuthor());
-    }
-
-    @DeleteMapping("/{id}")
-    public void delete(@PathVariable long id) {
-        log.info("Deleting task by id: {} ...", id);
-        tasksRepository.delete(id);
-    }
-
-    @PutMapping("/{id}")
-    @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void update(@PathVariable long id, @RequestBody UpdateTaskRequest request) {
-        log.info("Updating task by id: {} ...", id);
-        tasksService.updateTask(id, request.getTitle(), request.getDescription(), request.getAuthor());
-    }
-
-    private TaskResponse toTaskResponse(Task task) {
+    private TaskResponse toTaskResponse(@NonNull Task task) {
         return new TaskResponse(
                 task.getId(),
                 task.getTitle(),

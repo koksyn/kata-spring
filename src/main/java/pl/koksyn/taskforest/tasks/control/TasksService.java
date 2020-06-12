@@ -17,6 +17,21 @@ public class TasksService {
     private final Clock clock;
     private final AtomicLong nextTaskId = new AtomicLong(0L);
 
+    public List<Task> getAll() {
+        return tasksRepository.getAll();
+    }
+
+    public List<Task> filterAll(String query) {
+        return getAll()
+                .stream()
+                .filter(task -> task.getTitle().contains(query) || task.getDescription().contains(query))
+                .collect(toList());
+    }
+
+    public Task get(long id) {
+        return tasksRepository.get(id);
+    }
+
     public void addTask(String title, String description, String author) {
         tasksRepository.add(
                 new Task(
@@ -33,15 +48,8 @@ public class TasksService {
         tasksRepository.update(id, title, description, author);
     }
 
-    public List<Task> getAll() {
-        return tasksRepository.getAll();
-    }
 
-    public List<Task> filterAll(String query) {
-        return getAll()
-                .stream()
-                .filter(task -> task.getTitle().contains(query) ||
-                                task.getDescription().contains(query))
-                .collect(toList());
+    public void delete(long id) {
+        tasksRepository.delete(id);
     }
 }
