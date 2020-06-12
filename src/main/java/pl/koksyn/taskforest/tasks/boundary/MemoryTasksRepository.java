@@ -1,6 +1,7 @@
 package pl.koksyn.taskforest.tasks.boundary;
 
 import org.springframework.stereotype.Component;
+import pl.koksyn.taskforest.exceptions.NotFoundException;
 import pl.koksyn.taskforest.tasks.entity.Task;
 
 import java.util.*;
@@ -31,11 +32,11 @@ public class MemoryTasksRepository implements TasksRepository {
 
     @Override
     public void update(long id, String title, String description, String author) {
-        findById(id).ifPresent(task -> {
-            task.setTitle(title);
-            task.setDescription(description);
-            task.setAuthor(author);
-        });
+        Task task = findById(id)
+                .orElseThrow(() -> new NotFoundException("Task with id: " + id + " not found."));
+        task.setTitle(title);
+        task.setDescription(description);
+        task.setAuthor(author);
     }
 
     private Optional<Task> findById(long id) {
