@@ -10,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import pl.koksyn.taskforest.exceptions.NotFoundException;
 import pl.koksyn.taskforest.tasks.control.TasksService;
 import pl.koksyn.taskforest.tasks.entity.Task;
 import javax.annotation.PostConstruct;
@@ -86,6 +87,11 @@ public class TasksController {
             HttpServletRequest request) throws IOException {
         log.info("Getting attachment '{}' for Task by id: {}", filename, id);
 
+        Task task = tasksService.get(id);
+        if(!task.containsAttachment(filename)) {
+            throw new NotFoundException("Task does not contain attachment with fileName: " + filename);
+        }
+
         Resource resource = storageService.loadFile(filename);
         String absolutePath = resource.getFile().getAbsolutePath();
         String mimeType = request.getServletContext()
@@ -103,9 +109,17 @@ public class TasksController {
     @PostMapping("/{id}/attachments")
     @ResponseStatus(HttpStatus.CREATED)
     public void addAttachment(@PathVariable long id, @RequestParam("file") MultipartFile file) throws IOException {
-        log.info("Adding attachment: '{}' for Task by id: {}", file.getName(), id);
+        final String fileName = file.getName();
+        log.info("Adding attachment: '{}' for Task by id: {}", fileName, id);
 
-        storageService.saveFile(id, file);
+        Task task = tasksService.get(id);
+        task.addAttachment(fileName);
+        try {
+            storageService.saveFile(id, file);
+        } catch (IOException exception) {
+            task.removeAttachment(fileName);
+            throw exception;
+        }
     }
 
     private TaskResponse toTaskResponse(@NonNull Task task) {
@@ -114,7 +128,8 @@ public class TasksController {
                 task.getTitle(),
                 task.getDescription(),
                 task.getAuthor(),
-                task.getCreatedAt()
+                task.getCreatedAt(),
+                task.getAttachments()
         );
     }
 }
