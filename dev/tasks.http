@@ -11,6 +11,9 @@ Content-Type: application/json
 GET localhost:8081/api/tasks
 
 ###
+GET localhost:8081/api/tasks?query=Lopata
+
+###
 GET localhost:8081/api/tasks/1
 
 ###

@@ -5,10 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import pl.koksyn.taskforest.tasks.control.TasksService;
 import pl.koksyn.taskforest.tasks.entity.Task;
-
 import javax.annotation.PostConstruct;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 
@@ -28,9 +27,11 @@ public class TasksController {
     }
 
     @GetMapping
-    public List<TaskResponse> get() {
-        log.info("Fetching all tasks...");
-        return tasksRepository.getAll()
+    public List<TaskResponse> get(@RequestParam Optional<String> query) {
+        log.info("Fetching all tasks with query: {}", query);
+
+        return query.map(tasksService::filterAll)
+                .orElseGet(tasksService::getAll)
                 .stream()
                 .map(this::toTaskResponse)
                 .collect(toList());
