@@ -21,7 +21,7 @@ GET {{host}}:{{port}}/api/tasks/1
 DELETE {{host}}:{{port}}/api/tasks/1
 
 ###
-PUT {{host}}:{{port}}/api/tasks/11
+PUT {{host}}:{{port}}/api/tasks/2
 Content-Type: application/json
 
 {

@@ -56,7 +56,7 @@ public class TasksController {
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.CREATED)
     public void add(@RequestBody CreateTaskRequest request) {
         log.info("Adding new Task {}", request);
 
@@ -101,7 +101,7 @@ public class TasksController {
     }
 
     @PostMapping("/{id}/attachments")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.CREATED)
     public void addAttachment(@PathVariable long id, @RequestParam("file") MultipartFile file) throws IOException {
         log.info("Adding attachment: '{}' for Task by id: {}", file.getName(), id);
 
