@@ -38,7 +38,7 @@ POST {{host}}:{{port}}/api/tasks/1/attachments
 Content-Type: multipart/form-data; boundary=WebAppBoundary
 
 --WebAppBoundary
-Content-Disposition: form-data; name="file"; filename="file.txt"
+Content-Disposition: form-data; name="file"; filename="file"
 
 < ../../dev/file.txt
 --WebAppBoundary--
