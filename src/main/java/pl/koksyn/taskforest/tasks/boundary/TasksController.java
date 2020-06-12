@@ -26,7 +26,6 @@ import static java.util.stream.Collectors.toList;
 @RequestMapping(path = "/api/tasks")
 @RequiredArgsConstructor
 public class TasksController {
-    private final StorageService storageService;
     private final TasksService tasksService;
 
     @PostConstruct
@@ -85,18 +84,12 @@ public class TasksController {
             @PathVariable long id,
             @PathVariable String filename,
             HttpServletRequest request) throws IOException {
-        log.info("Getting attachment '{}' for Task by id: {}", filename, id);
+        log.info("Getting attachment '{}' from Task by id: {}", filename, id);
 
-        Task task = tasksService.get(id);
-        if(!task.containsAttachment(filename)) {
-            throw new NotFoundException("Task does not contain attachment with fileName: " + filename);
-        }
+        Resource resource = tasksService.getAttachmentFromTaskById(filename, id);
 
-        Resource resource = storageService.loadFile(filename);
         String absolutePath = resource.getFile().getAbsolutePath();
-        String mimeType = request.getServletContext()
-                .getMimeType(absolutePath);
-
+        String mimeType = request.getServletContext().getMimeType(absolutePath);
         MediaType contentType = (StringUtils.isBlank(mimeType)) ?
                 MediaType.APPLICATION_OCTET_STREAM :
                 MediaType.parseMediaType(mimeType);
@@ -109,17 +102,9 @@ public class TasksController {
     @PostMapping("/{id}/attachments")
     @ResponseStatus(HttpStatus.CREATED)
     public void addAttachment(@PathVariable long id, @RequestParam("file") MultipartFile file) throws IOException {
-        final String fileName = file.getName();
-        log.info("Adding attachment: '{}' for Task by id: {}", fileName, id);
+        log.info("Adding attachment: '{}' to Task by id: {}", file.getName(), id);
 
-        Task task = tasksService.get(id);
-        task.addAttachment(fileName);
-        try {
-            storageService.saveFile(id, file);
-        } catch (IOException exception) {
-            task.removeAttachment(fileName);
-            throw exception;
-        }
+        tasksService.addAttachmentToTaskById(file, id);
     }
 
     private TaskResponse toTaskResponse(@NonNull Task task) {
