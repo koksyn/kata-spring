@@ -4,8 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import pl.koksyn.taskforest.exceptions.AttachmentExistsException;
-import pl.koksyn.taskforest.exceptions.NotFoundException;
-
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.HashSet;

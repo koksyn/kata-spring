@@ -10,7 +10,6 @@ import pl.koksyn.taskforest.exceptions.NotFoundException;
 import pl.koksyn.taskforest.tasks.boundary.StorageService;
 import pl.koksyn.taskforest.tasks.boundary.TasksRepository;
 import pl.koksyn.taskforest.tasks.entity.Task;
-
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.List;
