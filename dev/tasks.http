@@ -17,4 +17,11 @@ GET localhost:8081/api/tasks/1
 DELETE localhost:8081/api/tasks/1
 
 ###
-#PUT localhost:8081/api/tasks/1
+PUT localhost:8081/api/tasks/1
+Content-Type: application/json
+
+{
+  "title": "Walk into forest 2",
+  "description": "Walk 2",
+  "author": "nobody 2"
+}
