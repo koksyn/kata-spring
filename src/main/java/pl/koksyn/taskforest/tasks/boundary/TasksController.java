@@ -10,7 +10,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import pl.koksyn.taskforest.exceptions.NotFoundException;
 import pl.koksyn.taskforest.tasks.control.TasksService;
 import pl.koksyn.taskforest.tasks.entity.Task;
 import javax.annotation.PostConstruct;
@@ -76,7 +75,7 @@ public class TasksController {
     public void delete(@PathVariable long id) {
         log.info("Deleting task by id: {}", id);
 
-        tasksService.delete(id);
+        tasksService.deleteTask(id);
     }
 
     @GetMapping("/{id}/attachments/{filename}")

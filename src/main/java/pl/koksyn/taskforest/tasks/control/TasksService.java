@@ -58,26 +58,26 @@ public class TasksService {
     }
 
 
-    public void delete(long id) {
+    public void deleteTask(long id) {
         tasksRepository.delete(id);
     }
 
-    public void addAttachmentToTaskById(@NonNull MultipartFile file, long id) throws IOException {
-        Task task = get(id);
+    public void addAttachmentToTaskById(@NonNull MultipartFile file, long taskId) throws IOException {
+        Task task = get(taskId);
 
         final String fileName = file.getName();
         task.addAttachment(fileName);
 
         try {
-            storageService.saveFile(id, file);
+            storageService.saveFile(taskId, file);
         } catch (IOException exception) {
             task.removeAttachment(fileName);
             throw exception;
         }
     }
 
-    public Resource getAttachmentFromTaskById(String filename, long id) throws MalformedURLException {
-        Task task = get(id);
+    public Resource getAttachmentFromTaskById(String filename, long taskId) throws MalformedURLException {
+        Task task = get(taskId);
         if(!task.containsAttachment(filename)) {
             throw new NotFoundException("Task does not contain attachment with fileName: " + filename);
         }
