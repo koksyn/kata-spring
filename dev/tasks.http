@@ -1,4 +1,5 @@
-POST localhost:8081/api/tasks
+###
+POST {{host}}:{{port}}/api/tasks
 Content-Type: application/json
 
 {
@@ -8,19 +9,19 @@ Content-Type: application/json
 }
 
 ###
-GET localhost:8081/api/tasks
+GET {{host}}:{{port}}/api/tasks
 
 ###
-GET localhost:8081/api/tasks?query=Lopata
+GET {{host}}:{{port}}/api/tasks?query=Lopata
 
 ###
-GET localhost:8081/api/tasks/1
+GET {{host}}:{{port}}/api/tasks/1
 
 ###
-DELETE localhost:8081/api/tasks/1
+DELETE {{host}}:{{port}}/api/tasks/1
 
 ###
-PUT localhost:8081/api/tasks/11
+PUT {{host}}:{{port}}/api/tasks/11
 Content-Type: application/json
 
 {
@@ -28,3 +29,17 @@ Content-Type: application/json
   "description": "Walk 2",
   "author": "nobody 2"
 }
+
+###
+GET {{host}}:{{port}}/api/tasks/1/attachments/file
+
+###
+POST {{host}}:{{port}}/api/tasks/1/attachments
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="file"; filename="file.txt"
+
+< ../../dev/file.txt
+--WebAppBoundary--
+

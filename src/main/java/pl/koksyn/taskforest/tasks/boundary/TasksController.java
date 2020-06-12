@@ -2,16 +2,13 @@ package pl.koksyn.taskforest.tasks.boundary;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
-import pl.koksyn.taskforest.exceptions.NotFoundException;
+import org.springframework.web.multipart.MultipartFile;
 import pl.koksyn.taskforest.tasks.control.TasksService;
 import pl.koksyn.taskforest.tasks.entity.Task;
 import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
@@ -23,6 +20,7 @@ import static java.util.stream.Collectors.toList;
 @RequestMapping(path = "/api/tasks")
 @RequiredArgsConstructor
 public class TasksController {
+    private final StorageService storageService;
     private final TasksService tasksService;
     private final TasksRepository tasksRepository;
 
@@ -48,6 +46,19 @@ public class TasksController {
     public TaskResponse get(@PathVariable long id) {
         log.info("Fetching task by id: {} ...", id);
         return toTaskResponse(tasksRepository.get(id));
+    }
+
+    @GetMapping("/{id}/attachments/{filename}")
+    public ResponseEntity getAttachment(@PathVariable long id, @PathVariable String filename) {
+        // pobierz plik
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{id}/attachments")
+    public ResponseEntity addAttachment(@PathVariable long id, @RequestParam("file") MultipartFile file) throws IOException {
+        log.info("Handling file upload: {}", file.getName());
+        storageService.saveFile(id, file);
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping
