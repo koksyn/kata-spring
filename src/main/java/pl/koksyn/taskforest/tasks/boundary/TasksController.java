@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import pl.koksyn.taskforest.exceptions.NotFoundException;
@@ -62,14 +63,10 @@ public class TasksController {
     }
 
     @PutMapping("/{id}")
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void update(@PathVariable long id, @RequestBody UpdateTaskRequest request) {
         log.info("Updating task by id: {} ...", id);
-
-        try {
-            tasksService.updateTask(id, request.getTitle(), request.getDescription(), request.getAuthor());
-        } catch (NotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        }
+        tasksService.updateTask(id, request.getTitle(), request.getDescription(), request.getAuthor());
     }
 
     private TaskResponse toTaskResponse(Task task) {
