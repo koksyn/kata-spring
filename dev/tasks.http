@@ -1,12 +1,45 @@
-POST localhost:8080
+###
+POST {{host}}:{{port}}/api/tasks
 Content-Type: application/json
 
 {
   "title": "Walk into forest",
+  "description": "Walk",
   "author": "nobody"
 }
 
 ###
-GET localhost:8080
+GET {{host}}:{{port}}/api/tasks
 
 ###
+GET {{host}}:{{port}}/api/tasks?query=Lopata
+
+###
+GET {{host}}:{{port}}/api/tasks/1
+
+###
+DELETE {{host}}:{{port}}/api/tasks/1
+
+###
+PUT {{host}}:{{port}}/api/tasks/2
+Content-Type: application/json
+
+{
+  "title": "Walk into forest 2",
+  "description": "Walk 2",
+  "author": "nobody 2"
+}
+
+###
+GET {{host}}:{{port}}/api/tasks/1/attachments/file
+
+###
+POST {{host}}:{{port}}/api/tasks/1/attachments
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="file"; filename="file"
+
+< ../../dev/file.txt
+--WebAppBoundary--
+
