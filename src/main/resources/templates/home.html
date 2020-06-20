@@ -33,8 +33,28 @@
                     <td th:text="${task.author}"></td>
                     <td th:text="${task.createdAt}"></td>
                     <td th:text="${task.attachments}"></td>
+                    <td>
+                        <form th:action="@{/tasks/delete/{id}(id=${task.id})}" action="#" method="post">
+                            <button type="submit">Delete</button>
+                        </form>
+                    </td>
                 </tr>
             </tbody>
         </table>
+
+        <form th:object="${newTask}" th:action="@{/tasks}" action="#" method="post">
+            <fieldset>
+                <label>
+                    Title <input type="text" th:field="*{title}" />
+                </label>
+                <label>
+                    Description <textarea th:field="*{description}" ></textarea>
+                </label>
+                <label>
+                    Author <input type="text" th:field="*{author}" />
+                </label>
+            </fieldset>
+            <button type="submit">Add task</button>
+        </form>
     </body>
 </html>
