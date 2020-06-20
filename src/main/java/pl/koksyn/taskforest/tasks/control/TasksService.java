@@ -58,7 +58,7 @@ public class TasksService {
         Task task = addTask(title, description, author);
         String originalFilename = attachment.getOriginalFilename();
 
-        if(StringUtils.isNotBlank(originalFilename)) {
+        if(!attachment.isEmpty() && StringUtils.isNotBlank(originalFilename)) {
             storageService.saveFile(task.getId(), attachment);
             task.addAttachment(originalFilename);
         }
@@ -79,17 +79,19 @@ public class TasksService {
         tasksRepository.delete(id);
     }
 
-    public void addAttachmentToTaskById(@NonNull MultipartFile file, long taskId) throws IOException {
-        Task task = get(taskId);
+    public void addAttachmentToTaskById(@NonNull MultipartFile attachment, long taskId) throws IOException {
+        final String originalFilename = attachment.getOriginalFilename();
 
-        final String fileName = file.getOriginalFilename();
-        task.addAttachment(fileName);
+        if(!attachment.isEmpty() && StringUtils.isNotBlank(originalFilename)) {
+            Task task = get(taskId);
+            task.addAttachment(originalFilename);
 
-        try {
-            storageService.saveFile(taskId, file);
-        } catch (IOException exception) {
-            task.removeAttachment(fileName);
-            throw exception;
+            try {
+                storageService.saveFile(taskId, attachment);
+            } catch (IOException exception) {
+                task.removeAttachment(originalFilename);
+                throw exception;
+            }
         }
     }
 
