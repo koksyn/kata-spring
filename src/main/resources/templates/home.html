@@ -42,16 +42,25 @@
             </tbody>
         </table>
 
-        <form th:object="${newTask}" th:action="@{/tasks}" action="#" method="post">
+        <form th:object="${newTask}" th:action="@{/tasks}" action="#" method="post" enctype="multipart/form-data">
             <fieldset>
                 <label>
                     Title <input type="text" th:field="*{title}" />
                 </label>
+            </fieldset>
+            <fieldset>
                 <label>
                     Description <textarea th:field="*{description}" ></textarea>
                 </label>
+            </fieldset>
+            <fieldset>
                 <label>
                     Author <input type="text" th:field="*{author}" />
+                </label>
+            </fieldset>
+            <fieldset>
+                <label>
+                    Attachment <input type="file" name="attachment" />
                 </label>
             </fieldset>
             <button type="submit">Add task</button>

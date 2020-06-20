@@ -3,11 +3,11 @@ package pl.koksyn.taskforest.tasks.boundary;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import pl.koksyn.taskforest.tasks.control.TasksService;
+
+import java.io.IOException;
 
 @Controller
 @RequiredArgsConstructor
@@ -22,8 +22,11 @@ public class TasksViewController {
     }
 
     @PostMapping("/tasks")
-    public String addTask(@ModelAttribute("newTask") CreateTaskRequest request) {
-        tasksService.addTask(request.getTitle(), request.getDescription(), request.getAuthor());
+    public String addTask(
+            @ModelAttribute("newTask") CreateTaskRequest request,
+            @RequestParam("attachment") MultipartFile attachment
+    ) throws IOException {
+        tasksService.addTaskWithAttachment(request.getTitle(), request.getDescription(), request.getAuthor(), attachment);
         return "redirect:/";
     }
 

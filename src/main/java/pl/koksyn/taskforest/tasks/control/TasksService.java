@@ -2,6 +2,7 @@ package pl.koksyn.taskforest.tasks.control;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -40,31 +41,48 @@ public class TasksService {
         return tasksRepository.get(id);
     }
 
-    public void addTask(String title, String description, String author) {
-        tasksRepository.add(
-                new Task(
-                        nextTaskId.getAndIncrement(),
-                        title,
-                        description,
-                        author,
-                        clock.time()
-                )
+    public Task addTask(String title, String description, String author) {
+        Task task = new Task(
+                nextTaskId.getAndIncrement(),
+                title,
+                description,
+                author,
+                clock.time()
         );
+
+        tasksRepository.add(task);
+        return task;
+    }
+
+    public void addTaskWithAttachment(String title, String description, String author, @NonNull MultipartFile attachment) throws IOException {
+        Task task = addTask(title, description, author);
+        String originalFilename = attachment.getOriginalFilename();
+
+        if(StringUtils.isNotBlank(originalFilename)) {
+            storageService.saveFile(task.getId(), attachment);
+            task.addAttachment(originalFilename);
+        }
     }
 
     public void updateTask(long id, String title, String description, String author) {
         tasksRepository.update(id, title, description, author);
     }
 
-
     public void deleteTask(long id) {
+        Task task = get(id);
+        task.getAttachments()
+                .forEach(fileName -> {
+                    storageService.deleteFileByNameIfExists(fileName);
+                    task.removeAttachment(fileName);
+                });
+
         tasksRepository.delete(id);
     }
 
     public void addAttachmentToTaskById(@NonNull MultipartFile file, long taskId) throws IOException {
         Task task = get(taskId);
 
-        final String fileName = file.getName();
+        final String fileName = file.getOriginalFilename();
         task.addAttachment(fileName);
 
         try {
