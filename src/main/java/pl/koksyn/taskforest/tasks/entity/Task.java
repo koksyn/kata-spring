@@ -40,7 +40,7 @@ public class Task {
                 .anyMatch(attachment -> fileName.equals(attachment.getFileName()));
     }
 
-    public void addAttachment(String fileName) {
+    public void addAttachment(String fileName, String comment) {
         if(StringUtils.isBlank(fileName)) {
             throw new IllegalArgumentException("Attachment fileName cannot be empty or blank.");
         }
@@ -49,7 +49,7 @@ public class Task {
                 "Cannot add attachment, because filename '%s' is already added to this to Task(id=%s)", fileName, id
             ));
         }
-        attachments.add(new Attachment(fileName));
+        attachments.add(new Attachment(fileName, comment));
     }
 
     public void removeAttachment(String fileName) {

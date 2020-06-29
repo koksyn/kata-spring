@@ -101,10 +101,13 @@ public class TasksController {
 
     @PostMapping("/{id}/attachments")
     @ResponseStatus(HttpStatus.CREATED)
-    public void addAttachment(@PathVariable long id, @RequestParam("file") MultipartFile file) throws IOException {
+    public void addAttachment(@PathVariable long id,
+                              @RequestParam("file") MultipartFile file,
+                              @RequestParam("comment") String comment
+    ) throws IOException {
         log.info("Adding attachment: '{}' to Task by id: {}", file.getName(), id);
 
-        tasksService.addAttachmentToTaskById(file, id);
+        tasksService.addAttachmentToTaskById(file, comment, id);
     }
 
     private TaskResponse toTaskResponse(@NonNull Task task) {

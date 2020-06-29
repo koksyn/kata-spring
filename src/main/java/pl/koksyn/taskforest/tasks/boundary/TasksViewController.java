@@ -26,7 +26,7 @@ public class TasksViewController {
             @ModelAttribute("newTask") CreateTaskRequest request,
             @RequestParam("attachment") MultipartFile attachment
     ) throws IOException {
-        tasksService.addTaskWithAttachment(request.getTitle(), request.getDescription(), request.getAuthor(), attachment);
+        tasksService.addTaskWithAttachment(request.getTitle(), request.getDescription(), request.getAuthor(), attachment, request.getAttachmentComment());
         return "redirect:/";
     }
 

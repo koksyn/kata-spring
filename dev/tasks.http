@@ -42,4 +42,8 @@ Content-Disposition: form-data; name="file"; filename="file"
 
 < ../../dev/file.txt
 --WebAppBoundary--
+Content-Disposition: form-data; name="comment"
+
+Comment for attachment
+--WebAppBoundary--
 

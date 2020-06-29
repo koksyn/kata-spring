@@ -10,6 +10,7 @@ CREATE TABLE tasks (
 
 CREATE TABLE attachments (
     `file_name` VARCHAR(100) UNIQUE,
+    `comment` VARCHAR(1024),
     `task` NUMERIC,
     FOREIGN KEY (`task`) REFERENCES tasks (`id`)
 );
