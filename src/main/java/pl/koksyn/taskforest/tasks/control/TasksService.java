@@ -10,11 +10,11 @@ import pl.koksyn.taskforest.Clock;
 import pl.koksyn.taskforest.exceptions.NotFoundException;
 import pl.koksyn.taskforest.tasks.boundary.StorageService;
 import pl.koksyn.taskforest.tasks.boundary.TasksRepository;
+import pl.koksyn.taskforest.tasks.entity.Attachment;
 import pl.koksyn.taskforest.tasks.entity.Task;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 
 import static java.util.stream.Collectors.toList;
 
@@ -24,7 +24,6 @@ public class TasksService {
     private final StorageService storageService;
     private final TasksRepository tasksRepository;
     private final Clock clock;
-    private final AtomicLong nextTaskId = new AtomicLong(0L);
 
     public List<Task> getAll() {
         return tasksRepository.getAll();
@@ -43,7 +42,6 @@ public class TasksService {
 
     public Task addTask(String title, String description, String author) {
         Task task = new Task(
-                nextTaskId.getAndIncrement(),
                 title,
                 description,
                 author,
@@ -54,13 +52,13 @@ public class TasksService {
         return task;
     }
 
-    public void addTaskWithAttachment(String title, String description, String author, @NonNull MultipartFile attachment) throws IOException {
+    public void addTaskWithAttachment(String title, String description, String author, @NonNull MultipartFile attachment, String comment) throws IOException {
         Task task = addTask(title, description, author);
         String originalFilename = attachment.getOriginalFilename();
 
         if(!attachment.isEmpty() && StringUtils.isNotBlank(originalFilename)) {
             storageService.saveFile(task.getId(), attachment);
-            task.addAttachment(originalFilename);
+            task.addAttachment(originalFilename, comment);
         }
     }
 
@@ -71,6 +69,8 @@ public class TasksService {
     public void deleteTask(long id) {
         Task task = get(id);
         task.getAttachments()
+                .stream()
+                .map(Attachment::getFileName)
                 .forEach(fileName -> {
                     storageService.deleteFileByNameIfExists(fileName);
                     task.removeAttachment(fileName);
@@ -79,15 +79,16 @@ public class TasksService {
         tasksRepository.delete(id);
     }
 
-    public void addAttachmentToTaskById(@NonNull MultipartFile attachment, long taskId) throws IOException {
+    public void addAttachmentToTaskById(@NonNull MultipartFile attachment, String comment, long taskId) throws IOException {
         final String originalFilename = attachment.getOriginalFilename();
 
         if(!attachment.isEmpty() && StringUtils.isNotBlank(originalFilename)) {
             Task task = get(taskId);
-            task.addAttachment(originalFilename);
+            task.addAttachment(originalFilename, comment);
 
             try {
                 storageService.saveFile(taskId, attachment);
+                tasksRepository.save(task);
             } catch (IOException exception) {
                 task.removeAttachment(originalFilename);
                 throw exception;

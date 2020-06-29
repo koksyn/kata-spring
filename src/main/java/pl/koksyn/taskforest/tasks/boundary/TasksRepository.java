@@ -10,4 +10,5 @@ public interface TasksRepository {
     void add(Task task);
     void update(long id, String title, String description, String author);
     void delete(long id);
+    void save(Task task);
 }

@@ -1,12 +1,12 @@
 package pl.koksyn.taskforest.tasks.boundary;
 
 import lombok.NonNull;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import pl.koksyn.taskforest.exceptions.NotFoundException;
 import pl.koksyn.taskforest.tasks.entity.Task;
 import java.util.*;
 
-@Component
+@Repository
 public class MemoryTasksRepository implements TasksRepository {
     private final Set<Task> tasks = new HashSet<>();
 
@@ -36,6 +36,12 @@ public class MemoryTasksRepository implements TasksRepository {
     @Override
     public void delete(long id) {
         findById(id).ifPresent(tasks::remove);
+    }
+
+    @Override
+    public void save(Task task) {
+        delete(task.getId());
+        add(task);
     }
 
     private Optional<Task> findById(long id) {
