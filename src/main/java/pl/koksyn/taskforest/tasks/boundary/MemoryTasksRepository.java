@@ -1,12 +1,12 @@
 package pl.koksyn.taskforest.tasks.boundary;
 
 import lombok.NonNull;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import pl.koksyn.taskforest.exceptions.NotFoundException;
 import pl.koksyn.taskforest.tasks.entity.Task;
 import java.util.*;
 
-@Component
+@Repository
 public class MemoryTasksRepository implements TasksRepository {
     private final Set<Task> tasks = new HashSet<>();
 

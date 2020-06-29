@@ -24,7 +24,6 @@ public class TasksService {
     private final StorageService storageService;
     private final TasksRepository tasksRepository;
     private final Clock clock;
-    private final AtomicLong nextTaskId = new AtomicLong(0L);
 
     public List<Task> getAll() {
         return tasksRepository.getAll();
@@ -43,7 +42,6 @@ public class TasksService {
 
     public Task addTask(String title, String description, String author) {
         Task task = new Task(
-                nextTaskId.getAndIncrement(),
                 title,
                 description,
                 author,
