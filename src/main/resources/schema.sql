@@ -7,3 +7,9 @@ CREATE TABLE tasks (
     `author` VARCHAR(100),
     `created_at` TIMESTAMP
 );
+
+CREATE TABLE attachments (
+    `file_name` VARCHAR(100) UNIQUE,
+    `task` NUMERIC,
+    FOREIGN KEY (`task`) REFERENCES tasks (`id`)
+);

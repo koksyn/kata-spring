@@ -14,7 +14,6 @@ import pl.koksyn.taskforest.tasks.entity.Task;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 
 import static java.util.stream.Collectors.toList;
 
@@ -86,6 +85,7 @@ public class TasksService {
 
             try {
                 storageService.saveFile(taskId, attachment);
+                tasksRepository.save(task);
             } catch (IOException exception) {
                 task.removeAttachment(originalFilename);
                 throw exception;

@@ -50,4 +50,9 @@ public class AdaptedTasksCrudRepository implements TasksRepository {
     public void delete(long id) {
         repository.deleteById(id);
     }
+
+    @Override
+    public void save(Task task) {
+        repository.save(task);
+    }
 }

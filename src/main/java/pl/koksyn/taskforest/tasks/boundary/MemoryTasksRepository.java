@@ -38,6 +38,12 @@ public class MemoryTasksRepository implements TasksRepository {
         findById(id).ifPresent(tasks::remove);
     }
 
+    @Override
+    public void save(Task task) {
+        delete(task.getId());
+        add(task);
+    }
+
     private Optional<Task> findById(long id) {
         return tasks.stream()
                 .filter(task -> id == task.getId())
