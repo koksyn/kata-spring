@@ -10,6 +10,7 @@ import pl.koksyn.taskforest.Clock;
 import pl.koksyn.taskforest.exceptions.NotFoundException;
 import pl.koksyn.taskforest.tasks.boundary.StorageService;
 import pl.koksyn.taskforest.tasks.boundary.TasksRepository;
+import pl.koksyn.taskforest.tasks.entity.Attachment;
 import pl.koksyn.taskforest.tasks.entity.Task;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -68,6 +69,8 @@ public class TasksService {
     public void deleteTask(long id) {
         Task task = get(id);
         task.getAttachments()
+                .stream()
+                .map(Attachment::getFileName)
                 .forEach(fileName -> {
                     storageService.deleteFileByNameIfExists(fileName);
                     task.removeAttachment(fileName);

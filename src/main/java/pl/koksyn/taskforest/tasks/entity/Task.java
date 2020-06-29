@@ -29,9 +29,8 @@ public class Task {
         this.createdAt = createdAt;
     }
 
-    public Set<String> getAttachments() {
+    public Set<Attachment> getAttachments() {
         return attachments.stream()
-                .map(Attachment::getFileName)
                 .collect(toUnmodifiableSet());
     }
 

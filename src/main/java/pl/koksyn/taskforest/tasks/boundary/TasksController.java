@@ -44,7 +44,7 @@ public class TasksController {
         return query.map(tasksService::filterAll)
                 .orElseGet(tasksService::getAll)
                 .stream()
-                .map(this::toTaskResponse)
+                .map(TaskResponse::from)
                 .collect(toList());
     }
 
@@ -52,7 +52,7 @@ public class TasksController {
     public TaskResponse get(@PathVariable long id) {
         log.info("Getting Task by id: {}", id);
 
-        return toTaskResponse(tasksService.get(id));
+        return TaskResponse.from(tasksService.get(id));
     }
 
     @PostMapping
@@ -108,16 +108,5 @@ public class TasksController {
         log.info("Adding attachment: '{}' to Task by id: {}", file.getName(), id);
 
         tasksService.addAttachmentToTaskById(file, comment, id);
-    }
-
-    private TaskResponse toTaskResponse(@NonNull Task task) {
-        return new TaskResponse(
-                task.getId(),
-                task.getTitle(),
-                task.getDescription(),
-                task.getAuthor(),
-                task.getCreatedAt(),
-                task.getAttachments()
-        );
     }
 }
